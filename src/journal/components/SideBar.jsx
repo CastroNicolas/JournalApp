@@ -1,11 +1,14 @@
-import { TurnedInNot } from "@mui/icons-material"
-import { Box, Divider, Drawer, Grid, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography, IconButton, AppBar } from "@mui/material"
+import { LoginOutlined, TurnedInNot } from "@mui/icons-material";
+import { Box, Divider, Drawer, Grid, List, ListItem, ListItemIcon, ListItemText, Toolbar, Typography, IconButton, AppBar, Button } from "@mui/material";
 import MenuIcon from '@mui/icons-material/Menu';
 import { useState } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from "../../store/auth/authSlice";
 
 export const SideBar = ({ drawerWidth = 240 }) => {
+    const { displayName } = useSelector(state => state.auth);
     const theme = useTheme();
     const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -14,10 +17,18 @@ export const SideBar = ({ drawerWidth = 240 }) => {
         setMobileOpen(!mobileOpen);
     };
 
+    const dispatch = useDispatch()
+    const onLogOut = () => {
+        dispatch(logout())
+    }
+    console.log(displayName)
+
     const drawerContent = (
         <>
             <Toolbar>
-                <Typography variant="h6" noWrap component="div">Nicolas Castro</Typography>
+                <Typography variant="h6" noWrap component="div">
+                    {displayName}
+                </Typography>
             </Toolbar>
             <Divider />
             <List>
@@ -33,6 +44,13 @@ export const SideBar = ({ drawerWidth = 240 }) => {
                     </ListItem>
                 ))}
             </List>
+            {!isSmallScreen && (
+                <Box sx={{ mt: 'auto', p: 2 }}>
+                    <Button variant="contained" color="primary">
+                        Logout
+                    </Button>
+                </Box>
+            )}
         </>
     );
 
@@ -50,9 +68,13 @@ export const SideBar = ({ drawerWidth = 240 }) => {
                         >
                             <MenuIcon />
                         </IconButton>
-                        <Typography variant="h6" noWrap component="div">
-                            Nicolas Castro
+                        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
+                            {displayName}
                         </Typography>
+                        <IconButton color='error'
+                            onClick={onLogOut}>
+                            <LoginOutlined />
+                        </IconButton>
                     </Toolbar>
                 </AppBar>
             )}
@@ -77,4 +99,4 @@ export const SideBar = ({ drawerWidth = 240 }) => {
             {isSmallScreen && <Toolbar />}
         </Box>
     );
-}
+};
